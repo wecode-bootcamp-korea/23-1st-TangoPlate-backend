@@ -1,4 +1,5 @@
 from django.db          import models
+
 from restaurants.models import Restaurant
 
 class User(models.Model):
@@ -11,16 +12,16 @@ class User(models.Model):
         db_table = 'users'
 
 class Rating(models.Model):
-    users_id       = models.ForeignKey('User', on_delete=models.CASCADE, db_column='users_id')
-    restaurants_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurants_id')
+    user_id       = models.ForeignKey('User', on_delete=models.SET_NULL, db_column='user_id')
+    restaurant_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurant_id')
     rating         = models.IntegerField()
 
     class Meta:
         db_table = 'ratings'
 
 class WishList(models.Model):
-    users_id       = models.ForeignKey('User', on_delete=models.CASCADE, db_column='users_id')
-    restaurants_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurants_id')
+    user_id       = models.ForeignKey('User', on_delete=models.CASCADE, db_column='user_id')
+    restaurant_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurant_id')
 
     class Meta:
         db_table = 'wishes'
