@@ -469,5 +469,5 @@ zsdoc/data
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,vim,macos,linux,zsh
 
 #보안관련파일과 크롤링파일
-my_setting.py
+my_settings.py
 *.csv 
