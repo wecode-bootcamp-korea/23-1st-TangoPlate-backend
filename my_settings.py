@@ -11,5 +11,3 @@ DATABASES = {
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-9fyga)5y0xk9whbhnihtrjgq)4pq5a^j(zc5ez&emr75ooyr_2'
-
-APPEND_SLASH = False
