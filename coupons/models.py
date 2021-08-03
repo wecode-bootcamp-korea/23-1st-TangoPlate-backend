@@ -12,7 +12,7 @@ class Coupon(models.Model):
     class Meta:
         db_table = 'coupons'
 
-class CouponImages(models.Model):
+class CouponImage(models.Model):
     coupons_id    = models.ForeignKey('Coupon', on_delete=models.CASCADE, db_column='coupons_id')
     image         = models.URLField(max_length=500)
 
