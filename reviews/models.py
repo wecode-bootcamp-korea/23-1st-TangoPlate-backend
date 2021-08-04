@@ -1,8 +1,5 @@
 from django.db          import models
 
-from users.models       import User
-from restaurants.models import Restaurant
-
 class Review(models.Model):
     user        = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True)
     restaurant  = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)

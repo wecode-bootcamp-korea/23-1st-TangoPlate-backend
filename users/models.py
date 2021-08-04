@@ -1,7 +1,5 @@
 from django.db          import models
 
-from restaurants.models import Restaurant
-
 class User(models.Model):
     nickname     = models.CharField(max_length=50, null=True)
     email        = models.EmailField(max_length=200)

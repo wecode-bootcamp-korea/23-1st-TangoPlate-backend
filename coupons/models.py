@@ -1,7 +1,5 @@
 from django.db          import models
 
-from restaurants.models import Restaurant
-
 class Coupon(models.Model):
     name           = models.CharField(max_length=40)
     restaurant     = models.ForeignKey('restaurants.Restaurant', on_delete=models.SET_NULL, null=True)
