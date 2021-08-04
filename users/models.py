@@ -12,16 +12,16 @@ class User(models.Model):
         db_table = 'users'
 
 class Rating(models.Model):
-    user_id       = models.ForeignKey('User', on_delete=models.SET_NULL, db_column='user_id')
-    restaurant_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurant_id')
-    rating         = models.IntegerField()
+    user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
+    rating     = models.IntegerField()
 
     class Meta:
         db_table = 'ratings'
 
 class WishList(models.Model):
-    user_id       = models.ForeignKey('User', on_delete=models.CASCADE, db_column='user_id')
-    restaurant_id = models.ForeignKey('Restaurant', on_delete=models.CASCADE, db_column='restaurant_id')
+    user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'wishes'
+        db_table = 'wishlist'

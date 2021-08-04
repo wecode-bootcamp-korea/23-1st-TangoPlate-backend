@@ -4,9 +4,9 @@ from restaurants.models import Restaurant
 
 class Coupon(models.Model):
     name           = models.CharField(max_length=40)
-    restaurant_id = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, db_column='restaurant_id', null=True)
+    restaurant     = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True)
     price          = models.DecimalField(max_digits= 6, decimal_places=1)
-    description   = models.CharField(max_length=500, null=True)
+    description    = models.CharField(max_length=500, null=True)
     start_date     = models.DateField()
     end_date       = models.DateField()
 
@@ -14,8 +14,8 @@ class Coupon(models.Model):
         db_table = 'coupons'
 
 class CouponImage(models.Model):
-    coupons_id    = models.ForeignKey('Coupon', on_delete=models.SET_NULL, db_column='coupon_id', null=True)
+    coupon        = models.ForeignKey('Coupon', on_delete=models.SET_NULL, null=True)
     image         = models.URLField(max_length=500)
 
     class Meta:
-        db_table = 'coupons_images'
+        db_table = 'coupon_images'
