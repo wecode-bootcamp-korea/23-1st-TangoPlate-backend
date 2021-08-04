@@ -13,7 +13,7 @@ class User(models.Model):
 
 class Rating(models.Model):
     user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
-    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
+    restaurant = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)
     rating     = models.IntegerField()
 
     class Meta:
@@ -21,7 +21,7 @@ class Rating(models.Model):
 
 class WishList(models.Model):
     user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
-    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
+    restaurant = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'wishlist'
