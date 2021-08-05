@@ -472,3 +472,4 @@ zsdoc/data
 my_settings.py
 *.csv 
 __pycache__
+utils.py
