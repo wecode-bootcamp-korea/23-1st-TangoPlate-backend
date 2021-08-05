@@ -41,15 +41,24 @@ class SignInView(View):
     def post(self, request):
         try:
             data     = json.loads(request.body)      
-            email    = data['email'] 
+            email    = data['email']
             password = data['password']        
 
             if not UserModel.objects.filter(email = email).exists():
                 return JsonResponse({'MESSAGE':'INVALID_VALUE'}, status = 401)
 
             if bcrypt.checkpw(password.encode('utf-8'),UserModel.objects.get(email=email).password.encode('utf-8')):
-                token = jwt.encode({'id':UserModel.objects.get(email=data['email']).id}, SECRET_KEY, algorithm=algorithm)
-                return JsonResponse({'TOKEN':token}, status = 200)
+                nickname = UserModel.objects.get(email = email).nickname
+                token = jwt.encode({'id':UserModel.objects.get(email=email).id}, SECRET_KEY, algorithm=algorithm)
+                results = []
+                results.append(
+                    {
+                        "TOKEN" : token,
+                        "EMAIL" : email,
+                        "NICKNAME" : nickname,
+                    }
+                )
+                return JsonResponse({'RESULTS':results}, status = 200)
 
             return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
 
