@@ -49,15 +49,8 @@ class SignInView(View):
             if bcrypt.checkpw(password.encode('utf-8'),User.objects.get(email=email).password.encode('utf-8')):
                 nickname = User.objects.get(email = email).nickname
                 token = jwt.encode({'id':User.objects.get(email=email).id}, SECRET_KEY, algorithm=const_algorithm)
-                result = []
-                result = (
-                    {
-                        "TOKEN" : token,
-                        "EMAIL" : email,
-                        "NICKNAME" : nickname,
-                    }
-                )
-                return JsonResponse({'RESULTS': result}, status = 200)
+            
+                return JsonResponse({'TOKEN': token, "EMAIL":email, "NICKNAME":nickname}, status = 200)
 
             return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
 
