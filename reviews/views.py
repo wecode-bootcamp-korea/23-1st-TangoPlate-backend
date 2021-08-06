@@ -8,26 +8,23 @@ from users.models         import User, WishList, Rating
 from users.utils          import login_decorator
 from restaurants.models   import Restaurant
 
-# Create your views here.
 class Review_View(View):
     @login_decorator
     def post(self, request, restaurant_id):
         try:
             data    = json.loads(request.body)
             user    = request.user
-            reviews = Review.objects.filter(user_id = user.id)
 
-            for review in reviews:
-                if review.restaurant_id == restaurant_id:
-                    return JsonResponse({'MESSAGE':'EXISTS'}, status=400)
+            if Review.objects.filter(user_id = user.id, restaurant_id = restaurant_id).exists():
+                return JsonResponse({'MESSAGE':'EXISTS'}, status=400)
 
             Review.objects.create(
                 restaurant_id = restaurant_id,
-                user_id       = User.objects.get(id=user.id).id,
+                user_id       = user.id,
                 description   = data['description'],
             )
 
-            review_id = Review.objects.filter(user_id = user)
+            review_id = Review.objects.filter(user_id = user.id)
             review_id = review_id[0].id
 
             ReviewImage.objects.create(
@@ -36,7 +33,7 @@ class Review_View(View):
             )
 
             Rating.objects.create(
-                user_id       = User.objects.get(id=user.id).id,
+                user_id       = user.id,
                 restaurant_id = restaurant_id,
                 rating        = data['rating']
             )
@@ -52,12 +49,16 @@ class Review_View(View):
             data = json.loads(request.body)
             user = request.user
 
-            Review.objects.filter(user_id = user.id, restaurant_id = restaurant_id).update(
+            user_review = Review.objects.filter(user_id = user.id, restaurant_id = restaurant_id)
+            if not user_review.exists():
+                return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
+
+            user_review.update(
                     restaurant_id = restaurant_id,
-                    user_id       = User.objects.get(id=user.id).id,
+                    user_id       = user.id,
                     description   = data['description'],
                     )
-            user_review = Review.objects.filter(user_id = user.id)
+
             review_id = user_review[0].id
 
             ReviewImage.objects.filter(review_id = review_id).update(
@@ -66,7 +67,7 @@ class Review_View(View):
                 )
             
             Rating.objects.filter(user_id = user.id, restaurant_id = restaurant_id).update(
-                user_id = User.objects.get(id=user.id).id,
+                user_id = user.id,
                 restaurant_id = restaurant_id,
                 rating = data['rating'],
             )
@@ -79,7 +80,11 @@ class Review_View(View):
     @login_decorator
     def delete(self, request, restaurant_id):
         try:
-            user          = request.user
+            user = request.user
+
+            if not Review.objects.filter(user_id = user.id, restaurant_id=restaurant_id).exists():
+                return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
+
             review_object = Review.objects.get(user_id = user.id, restaurant_id=restaurant_id)
             review_object.delete()
             
