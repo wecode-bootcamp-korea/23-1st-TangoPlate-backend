@@ -25,10 +25,10 @@ class Review_View(View):
                 description   = data['description'],
             )
 
-            review_image = Review.objects.get(user_id= user.id, restaurant_id=restaurant_id)
+            review_id = Review.objects.get(user_id= user.id, restaurant_id=restaurant_id)
 
             ReviewImage.objects.create(
-                review_id = review_image.id,
+                review_id = review_id.id,
                 image     = data['image'],
             )
 
@@ -92,7 +92,7 @@ class Review_View(View):
             rating_object = Rating.objects.get(user_id = user.id, restaurant_id=restaurant_id)
             rating_object.delete()
 
-            return JsonResponse({"MESSAGE": 'SUCCESS'}, status=201)
+            return JsonResponse({"MESSAGE": 'SUCCESS'}, status=200)
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
