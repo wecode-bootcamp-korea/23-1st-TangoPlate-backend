@@ -2,6 +2,7 @@ import json, re, bcrypt, jwt
 
 from django.views         import View
 from django.http          import JsonResponse
+from django.db.models     import Avg
 
 from reviews.models       import Review, ReviewImage
 from users.models         import User, WishList, Rating
@@ -24,18 +25,17 @@ class Review_View(View):
                 description   = data['description'],
             )
 
-            review_id = Review.objects.filter(user_id = user.id)
-            review_id = review_id[0].id
+            review_image = Review.objects.get(user_id= user.id, restaurant_id=restaurant_id)
 
             ReviewImage.objects.create(
-                review_id = review_id,
+                review_id = review_image.id,
                 image     = data['image'],
             )
 
             Rating.objects.create(
                 user_id       = user.id,
                 restaurant_id = restaurant_id,
-                rating        = data['rating']
+                rating        = data['rating'],
             )
 
             return JsonResponse({'MESSAGE':'SUCCESS'},status = 201)
@@ -81,8 +81,9 @@ class Review_View(View):
     def delete(self, request, restaurant_id):
         try:
             user = request.user
+            review = Review.objects.filter(user_id = user.id, restaurant_id=restaurant_id)
 
-            if not Review.objects.filter(user_id = user.id, restaurant_id=restaurant_id).exists():
+            if not review.exists():
                 return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
 
             review_object = Review.objects.get(user_id = user.id, restaurant_id=restaurant_id)
@@ -91,7 +92,7 @@ class Review_View(View):
             rating_object = Rating.objects.get(user_id = user.id, restaurant_id=restaurant_id)
             rating_object.delete()
 
-            return JsonResponse({'MESSAGE':'SUCCESS'}, status = 200)
+            return JsonResponse({"MESSAGE": 'SUCCESS'}, status=201)
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
