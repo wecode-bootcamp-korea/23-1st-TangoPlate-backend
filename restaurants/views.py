@@ -21,14 +21,14 @@ class SearchView(View):
                             reviews = Review.objects.filter(restaurant_id=restaurant.id)
                             results.append(
                                 {
-                                    "id"   : restaurant.id,
-                                    "name" : restaurant.name,
-                                    "rating" : restaurant.rating_set.rating,
+                                    "id"      : restaurant.id,
+                                    "name"    : restaurant.name,
+                                    "rating"  : restaurant.rating_set.rating,
                                     "address" : restaurant.address,
-                                    "review"         : [{
-                            "description": review.description,
-                            "images"     : [{
-                            "image_url" : imageobject.image
+                                    "review"  : [{
+                                "description" : review.description,
+                                "images"      : [{
+                                "image_url"   : imageobject.image
                             } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
                             } for review in reviews]
                             }
@@ -42,14 +42,14 @@ class SearchView(View):
                             reviews = Review.objects.filter(restaurant_id=restaurant.id)
                             results.append(
                                 {
-                                    "id"   : restaurant.id,
-                                    "name" : restaurant.name,
-                                    "rating" : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
+                                    "id"      : restaurant.id,
+                                    "name"    : restaurant.name,
+                                    "rating"  : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
                                     "address" : restaurant.address,
-                                    "review"         : [{
-                            "description": review.description,
-                            "images"     : [{
-                            "image_url" : imageobject.image
+                                    "review"  : [{
+                            "description"     : review.description,
+                            "images"          : [{
+                            "image_url"       : imageobject.image
                             } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
                             } for review in reviews]
                             }
@@ -61,14 +61,14 @@ class SearchView(View):
                         reviews = Review.objects.filter(restaurant_id=restaurant.id)
                         results.append(
                             {
-                                "id"   : restaurant.id,
-                                "name" : restaurant.name,
-                                "rating" : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
-                                "address" : restaurant.address,
-                                "review" : [{
-                            "description": review.description,
-                            "images"     : [{
-                            "image_url" : imageobject.image
+                                "id"          : restaurant.id,
+                                "name"        : restaurant.name,
+                                "rating"      : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
+                                "address"     : restaurant.address,
+                                "review"      : [{
+                                "description" : review.description,
+                                "images"      : [{
+                                "image_url"   : imageobject.image
                             } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
                             } for review in reviews]
                             }
@@ -80,14 +80,14 @@ class SearchView(View):
                         reviews = Review.objects.filter(restaurant_id=restaurant.id)
                         results.append(
                             {
-                            "id"   : restaurant.id,
-                                    "name" : restaurant.name,
-                                    "rating" : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
+                                    "id"      : restaurant.id,
+                                    "name"    : restaurant.name,
+                                    "rating"  : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
                                     "address" : restaurant.address,
-                                    "review"         : [{
-                            "description": review.description,
-                            "images"     : [{
-                                "image_url" : imageobject.image
+                                    "review"  : [{
+                                "description" : review.description,
+                                "images"      : [{
+                                "image_url"   : imageobject.image
                             } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
                             } for review in reviews]
                             }
