@@ -5,6 +5,7 @@ from django.http          import JsonResponse
 
 from users.models         import User
 from users.models         import WishList   
+from users.utils          import login_decorator
 from restaurants.models   import Restaurant
 from my_settings          import SECRET_KEY, const_algorithm
 
@@ -56,3 +57,16 @@ class SignInView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
+
+class WishListView(View):
+    @login_decorator
+    def get(self, request, restaurant_id):
+            if WishListModel.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exist():
+                WishListModel.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
+                return JsonResponse({"message":"WISHLIST_REMOVED"}, status=400)
+            WishListModel.objects.create(
+                user_id       = UserModel.objects.get(id = request.user.id),
+                restaurant_id = RestaurantModel.objects.get(id = restaurant_id)
+            )
+            return JsonResponse({"message":"SUCCESS"}, status=201)
+

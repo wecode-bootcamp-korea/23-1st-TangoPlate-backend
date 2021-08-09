@@ -1,7 +1,7 @@
 import json, re, bcrypt, jwt
 from django.views         import View
 from django.http          import JsonResponse
-from django.db.models       import Avg, Q
+from django.db.models     import Avg, Q
 
 from reviews.models       import Review, ReviewImage
 from users.models         import User, WishList, Rating
@@ -108,7 +108,7 @@ class ReviewView(View):
                                         "user_id"    : review.user.id,
                                         "user_name"  : review.user.nickname,
                                         "description": review.description,
-                                        # "rating"     : user_rating.rating,
+                                        # "rating"     : user_rating.rating if not user_rating.rating is None else None,
                                         "created_at" : review.created_at,
                                         "images"     : [{
                                                             "image_url" : imageobject.image

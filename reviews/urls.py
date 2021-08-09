@@ -1,5 +1,6 @@
-from reviews.models import Review
 from django.urls import path
+
+from reviews.models import Review
 from reviews.views import ReviewView
 
 urlpatterns = [
