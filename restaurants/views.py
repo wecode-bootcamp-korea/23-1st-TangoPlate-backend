@@ -21,7 +21,7 @@ class RestaurantDetailView(View):
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
                 "rating"         : rating_num,
-                # "restaurant_img" : restaurant.review_set.reviewimages_set(),
+                "restaurant_img" : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.get().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
                 "category"       : restaurant.category.name,
