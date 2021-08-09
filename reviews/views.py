@@ -7,7 +7,7 @@ from reviews.models       import Review, ReviewImage
 from users.models         import User, WishList
 from users.utils          import login_decorator
 from restaurants.models   import Restaurant
-class ReviewView(View):
+class ReviewCreateView(View):
     @login_decorator
     def post(self, request, restaurant_id):
         try:
@@ -34,6 +34,8 @@ class ReviewView(View):
             return JsonResponse({'MESSAGE':'SUCCESS'},status = 201)
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
+
+class ReviewUpdateDeleteView(View):
     @login_decorator 
     def put(self, request, restaurant_id):
         try:
