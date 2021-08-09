@@ -2,7 +2,7 @@ import json, re, bcrypt, jwt
 
 from django.views         import View
 from django.http          import JsonResponse
-from django.db.models     import Avg
+from django.db.models     import Avg, Q
 
 from reviews.models       import Review, ReviewImage
 from users.models         import User, WishList, Rating
@@ -16,7 +16,11 @@ class Review_View(View):
             data    = json.loads(request.body)
             user    = request.user
 
-            if Review.objects.filter(user_id = user.id, restaurant_id = restaurant_id).exists():
+            q = Q()
+            q.add(Q(user_id = user.id), Q.AND)
+            q.add(Q(restaurant_id=restaurant_id),Q.AND)
+
+            if Review.objects.filter(q).exists():
                 return JsonResponse({'MESSAGE':'EXISTS'}, status=400)
 
             Review.objects.create(
@@ -25,7 +29,7 @@ class Review_View(View):
                 description   = data['description'],
             )
 
-            review_id = Review.objects.get(user_id= user.id, restaurant_id=restaurant_id)
+            review_id = Review.objects.get(q)
 
             ReviewImage.objects.create(
                 review_id = review_id.id,
@@ -49,7 +53,11 @@ class Review_View(View):
             data = json.loads(request.body)
             user = request.user
 
-            user_review = Review.objects.filter(user_id = user.id, restaurant_id = restaurant_id)
+            q = Q()
+            q.add(Q(user_id = user.id), Q.AND)
+            q.add(Q(restaurant_id=restaurant_id),Q.AND)
+
+            user_review = Review.objects.filter(q)
             if not user_review.exists():
                 return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
 
@@ -66,7 +74,7 @@ class Review_View(View):
                 image     = data['image'],
                 )
             
-            Rating.objects.filter(user_id = user.id, restaurant_id = restaurant_id).update(
+            Rating.objects.filter(q).update(
                 user_id = user.id,
                 restaurant_id = restaurant_id,
                 rating = data['rating'],
@@ -81,15 +89,19 @@ class Review_View(View):
     def delete(self, request, restaurant_id):
         try:
             user = request.user
-            review = Review.objects.filter(user_id = user.id, restaurant_id=restaurant_id)
+            q = Q()
+            q.add(Q(user_id = user.id), Q.AND)
+            q.add(Q(restaurant_id=restaurant_id),Q.AND)
+
+            review = Review.objects.filter(q)
 
             if not review.exists():
                 return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
 
-            review_object = Review.objects.get(user_id = user.id, restaurant_id=restaurant_id)
+            review_object = Review.objects.get(q)
             review_object.delete()
             
-            rating_object = Rating.objects.get(user_id = user.id, restaurant_id=restaurant_id)
+            rating_object = Rating.objects.get(q)
             rating_object.delete()
 
             return JsonResponse({"MESSAGE": 'SUCCESS'}, status=200)
