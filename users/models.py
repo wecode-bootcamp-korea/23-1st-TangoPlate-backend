@@ -12,6 +12,7 @@ class User(models.Model):
 class Rating(models.Model):
     user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
     restaurant = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)
+    review     = models.ForeignKey('reviews.Review', on_delete=models.CASCADE)
     rating     = models.IntegerField()
 
     class Meta:

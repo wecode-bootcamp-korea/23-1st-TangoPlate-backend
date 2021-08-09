@@ -13,11 +13,11 @@ class RestaurantDetailView(View):
     def get(self, request, restaurant_id):
         try:
             restaurant         = Restaurant.objects.get(id = restaurant_id)
-            reviews            = Review.objects.filter(restaurant_id = restaurant_id)
+            reviews            = restaurant.review_set.all()
             is_wished          = restaurant.wishlist_set.filter(restaurant_id=restaurant_id).exists()
             menus              = restaurant.menu_set.filter(restaurant_id=restaurant.id)
+
             restaurant_ratings = Rating.objects.filter(restaurant_id=restaurant_id)
-            user_rating        = Rating.objects.get(user_id = request.user.id, restaurant_id=restaurant_id)
             rating_num         = restaurant_ratings.aggregate(rating = Avg('rating'))['rating']
 
             results = []
@@ -40,7 +40,7 @@ class RestaurantDetailView(View):
                                         "user_id"    : review.user.id,
                                         "user_name"  : review.user.nickname,
                                         "description": review.description,
-                                        "rating"     : user_rating.rating,
+                                        "rating"     : review.rating_set.get(review_id = review.id).rating,
                                         "created_at" : review.created_at,
                                         "images"     : [{
                                                             "image_url" : imageobject.image
