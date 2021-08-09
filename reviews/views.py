@@ -4,7 +4,7 @@ from django.http          import JsonResponse
 from django.db.models       import Avg, Q
 
 from reviews.models       import Review, ReviewImage
-from users.models         import User, WishList, Rating
+from users.models         import User, WishList
 from users.utils          import login_decorator
 from restaurants.models   import Restaurant
 class ReviewView(View):
@@ -81,13 +81,11 @@ class ReviewView(View):
             #=================
 
             restaurant         = Restaurant.objects.get(id = restaurant_id)
-            reviews            = Review.objects.filter(restaurant_id = restaurant_id)
-            is_wished          = restaurant.wishlist_set.filter(restaurant_id=restaurant_id).exists()
-            menus              = restaurant.menu_set.filter(restaurant_id=restaurant.id)
-            restaurant_ratings = Rating.objects.filter(restaurant_id=restaurant_id)
-            # user_rating        = Rating.objects.get(user_id = request.user.id, restaurant_id=restaurant_id)
-            rating_num         = restaurant_ratings.aggregate(rating = Avg('rating'))['rating']
-
+            reviews            = restaurant.review_set.all()
+            is_wished          = restaurant.wishlist_set.exists()
+            menus              = restaurant.menu_set.all()
+            rating_num         = restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating']
+            
             results = []
             results.append({
                 "id"             : restaurant.id,
@@ -108,14 +106,13 @@ class ReviewView(View):
                                         "user_id"    : review.user.id,
                                         "user_name"  : review.user.nickname,
                                         "description": review.description,
-                                        # "rating"     : user_rating.rating,
+                                        "rating"     : review.rating,
                                         "created_at" : review.created_at,
-                                        "images"     : [{
-                                                            "image_url" : imageobject.image
-                                                        } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
+                                        "images url" : [{images.image} for images in review.reviewimage_set.all()]
                 } for review in reviews]
             })
-            return JsonResponse({"results": results}, status=200)
+            return JsonResponse({"results": results}, status=201)
+
             #=================
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
