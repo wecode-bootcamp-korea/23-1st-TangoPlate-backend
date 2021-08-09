@@ -55,8 +55,8 @@ class SearchView(View):
                             }
                             )
 
-                if Restaurant.objects.filter(address__contains=search):
-                    restaurants = Restaurant.objects.filter(address__contains=search)
+                if Restaurant.objects.filter(address__contains=search, name__contains=search):
+                    restaurants = Restaurant.objects.filter(address__contains=search, name__contains=search)
                     for restaurant in restaurants:
                         reviews = Review.objects.filter(restaurant_id=restaurant.id)
                         results.append(
@@ -66,25 +66,6 @@ class SearchView(View):
                                 "rating"      : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
                                 "address"     : restaurant.address,
                                 "review"      : [{
-                                "description" : review.description,
-                                "images"      : [{
-                                "image_url"   : imageobject.image
-                            } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
-                            } for review in reviews]
-                            }
-                        )
-
-                if Restaurant.objects.filter(name__contains=search):
-                    restaurants = Restaurant.objects.filter(name__contains=search)
-                    for restaurant in restaurants:
-                        reviews = Review.objects.filter(restaurant_id=restaurant.id)
-                        results.append(
-                            {
-                                    "id"      : restaurant.id,
-                                    "name"    : restaurant.name,
-                                    "rating"  : Rating.objects.filter(restaurant_id=restaurant.id).aggregate(Avg('rating')),
-                                    "address" : restaurant.address,
-                                    "review"  : [{
                                 "description" : review.description,
                                 "images"      : [{
                                 "image_url"   : imageobject.image
