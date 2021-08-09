@@ -1,11 +1,8 @@
-from django.shortcuts import render
-
 from django.views         import View
 from django.http          import JsonResponse
 from django.db.models     import Avg
 
-from restaurants.models   import Restaurant, Category, Location, ServingPrice, Menu
-from users.models         import User, WishList
+from restaurants.models   import Restaurant
 from reviews.models       import Review, ReviewImage
 from users.utils          import login_decorator
 
