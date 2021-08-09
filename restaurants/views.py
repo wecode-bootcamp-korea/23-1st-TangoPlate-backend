@@ -5,7 +5,7 @@ from django.http          import JsonResponse
 from django.db.models     import Avg
 
 from restaurants.models   import Restaurant, Category, Location, ServingPrice, Menu
-from users.models         import User, WishList, Rating
+from users.models         import User, WishList
 from reviews.models       import Review, ReviewImage
 from users.utils          import login_decorator
 
@@ -17,7 +17,7 @@ class RestaurantDetailView(View):
             is_wished          = restaurant.wishlist_set.exists()
             menus              = restaurant.menu_set.all()
 
-            rating_num         = Rating.objects.all().aggregate(rating = Avg('rating'))['rating']
+            # rating_num         = Rating.objects.all().aggregate(rating = Avg('rating'))['rating']
 
             results = []
             results.append({
@@ -39,7 +39,7 @@ class RestaurantDetailView(View):
                                         "user_id"    : review.user.id,
                                         "user_name"  : review.user.nickname,
                                         "description": review.description,
-                                        "rating"     : review.rating_set.get(review_id = review.id).rating,
+                                        # "rating"     : review.rating_set.get(review_id = review.id).rating,
                                         "created_at" : review.created_at,
                                         "images url" : [{images.image} for images in review.reviewimage_set.all()]
                 } for review in reviews]
