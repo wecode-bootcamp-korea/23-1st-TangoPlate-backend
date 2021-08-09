@@ -14,11 +14,10 @@ class RestaurantDetailView(View):
         try:
             restaurant         = Restaurant.objects.get(id = restaurant_id)
             reviews            = restaurant.review_set.all()
-            is_wished          = restaurant.wishlist_set.filter(restaurant_id=restaurant_id).exists()
-            menus              = restaurant.menu_set.filter(restaurant_id=restaurant.id)
+            is_wished          = restaurant.wishlist_set.exists()
+            menus              = restaurant.menu_set.all()
 
-            restaurant_ratings = Rating.objects.filter(restaurant_id=restaurant_id)
-            rating_num         = restaurant_ratings.aggregate(rating = Avg('rating'))['rating']
+            rating_num         = Rating.objects.all().aggregate(rating = Avg('rating'))['rating']
 
             results = []
             results.append({
@@ -42,9 +41,7 @@ class RestaurantDetailView(View):
                                         "description": review.description,
                                         "rating"     : review.rating_set.get(review_id = review.id).rating,
                                         "created_at" : review.created_at,
-                                        "images"     : [{
-                                                            "image_url" : imageobject.image
-                                                        } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
+                                        "images url" : [{images.image} for images in review.reviewimage_set.all()]
                 } for review in reviews]
             })
             return JsonResponse({"results": results}, status=201)
