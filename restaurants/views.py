@@ -21,7 +21,7 @@ class RestaurantDetailView(View):
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
                 "rating"         : rating_num,
-                "restaurant_img" : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.get().image,
+                "restaurant_img" : reviews.last().reviewimage_set.last().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
                 "category"       : restaurant.category.name,
@@ -39,7 +39,7 @@ class RestaurantDetailView(View):
                                         "description": review.description,
                                         "rating"     : review.rating,
                                         "created_at" : review.created_at,
-                                        "images url" : review.reviewimage_set.get().image, 
+                                        "images url" : review.reviewimage_set.last().image,
                 } for review in reviews]
             })
             return JsonResponse({"results": results}, status=201)
@@ -68,7 +68,7 @@ class RestaurantListView(View):
             restaurants = [{
                     "id"          : restaurant.id,
                     "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.filter()[0].image,
+                    "image"       : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.last().image,
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
                     "is_wished"   : restaurant.wishlist_set.exists(),
