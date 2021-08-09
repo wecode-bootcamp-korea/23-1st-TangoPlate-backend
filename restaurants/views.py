@@ -16,9 +16,8 @@ class RestaurantDetailView(View):
             reviews            = restaurant.review_set.all()
             is_wished          = restaurant.wishlist_set.exists()
             menus              = restaurant.menu_set.all()
-
-            # rating_num         = Rating.objects.all().aggregate(rating = Avg('rating'))['rating']
-
+            rating_num         = restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating']
+            
             results = []
             results.append({
                 "id"             : restaurant.id,
@@ -39,7 +38,7 @@ class RestaurantDetailView(View):
                                         "user_id"    : review.user.id,
                                         "user_name"  : review.user.nickname,
                                         "description": review.description,
-                                        # "rating"     : review.rating_set.get(review_id = review.id).rating,
+                                        "rating"     : review.rating,
                                         "created_at" : review.created_at,
                                         "images url" : [{images.image} for images in review.reviewimage_set.all()]
                 } for review in reviews]
