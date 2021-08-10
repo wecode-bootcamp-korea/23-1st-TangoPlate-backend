@@ -60,7 +60,7 @@ class RestaurantListView(View):
                 q &= Q(category = category_id)
 
             if location_id:
-                q &= Q(location = location_id)
+                q &= Q(location_id = location_id)
 
             if serving_price_id:
                 q &= Q(serving_price_id = serving_price_id)
