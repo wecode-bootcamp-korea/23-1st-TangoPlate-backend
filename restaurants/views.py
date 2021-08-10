@@ -50,9 +50,9 @@ class RestaurantDetailView(View):
 class RestaurantListView(View):
     def get(self, request):
         try:
-            category_id       = request.GET.get("category")
-            location_id       = request.GET.get("location")
-            serving_price_id  = request.GET.get("serving_price")
+            category_id       = request.GET.get("categoryId")
+            location_id       = request.GET.get("locationId")
+            serving_price_id  = request.GET.get("servingPriceId")
 
             q        = Q()
 
