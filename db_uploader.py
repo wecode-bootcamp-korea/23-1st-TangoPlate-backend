@@ -7,9 +7,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tangoplate.settings")
 django.setup()
 
 from restaurants.models import Restaurant, Menu
-from reviews.models import Review
+from reviews.models import Review, ReviewImage
 
-CSV_PATH_LOCATION = 'review_images.csv'
+CSV_PATH_LOCATION = 'review_img2.csv'
 
 def insert_restaurants():
     with open(CSV_PATH_LOCATION) as in_file:
@@ -50,9 +50,20 @@ def insert_review_img():
     with open(CSV_PATH_LOCATION) as in_file:
         data_reader = csv.reader(in_file)
         for row in data_reader:
-            Review.objects.create(
+            ReviewImage.objects.create(
                 image=row[0], 
                 review_id=row[1],
+            )
+
+def insert_rating():
+    with open(CSV_PATH_LOCATION) as in_file:
+        data_reader = csv.reader(in_file)
+        for row in data_reader:
+            Rating.objects.create(
+                rating=row[0], 
+                restaurant_id = row[1],
+                user_id=row[2],
+                review_id=row[3]
             )
 
 insert_review_img()

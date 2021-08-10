@@ -3,9 +3,7 @@ import json, re, bcrypt, jwt
 from django.views         import View
 from django.http          import JsonResponse
 
-from users.models         import User
-from users.models         import WishList   
-from users.utils          import login_decorator
+from users.models         import User, WishList   
 from restaurants.models   import Restaurant
 from my_settings          import SECRET_KEY, const_algorithm
 
