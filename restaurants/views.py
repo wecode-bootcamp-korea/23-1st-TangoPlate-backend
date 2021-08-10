@@ -69,7 +69,7 @@ class RestaurantListView(View):
             restaurants = [{
                     "id"          : restaurant.id,
                     "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.last().image,
+                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
                     "is_wished"   : restaurant.wishlist_set.exists(),
