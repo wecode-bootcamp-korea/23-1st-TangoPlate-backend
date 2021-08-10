@@ -30,20 +30,22 @@ class RestaurantDetailView(View):
                 "category"       : restaurant.category.name,
                 "location"       : restaurant.location.area,
                 "serving_price"  : restaurant.serving_price.price,
-                "menus"          : [{   
-                                        "item"       : menu.item, 
-                                        "item_price" : menu.item_price
-                                    } for menu in menus],
-                "is_wished"      : is_wished,
-                "review"         : [{
-                                        "review_id"  : review.id,
-                                        "user_id"    : review.user.id,
-                                        "user_name"  : review.user.nickname,
-                                        "description": review.description,
-                                        "rating"     : review.rating,
-                                        "created_at" : review.created_at,
-                                        "images url" : review.reviewimage_set.last().image,
-                } for review in reviews]
+                "menus" : [{   
+                    "item"       : menu.item, 
+                    "item_price" : menu.item_price
+                } for menu in menus],
+                "is_wished"      : restaurant.wishlist_set.exists(),
+                "reviews"         : [{
+                    "id"  : review.id,
+                    "user" : {
+                        "id" : review.user.id,
+                        "name"  : review.user.nickname,
+                    },
+                    "description": review.description,
+                    "rating"     : review.rating,
+                    "created_at" : review.created_at,
+                    "images url" : review.reviewimage_set.last().image,
+                } for review in restaurant.review_set.all()]
             })
             return JsonResponse({"results": results}, status=201)
 
@@ -53,20 +55,20 @@ class RestaurantDetailView(View):
 class RestaurantListView(View):
     def get(self, request):
         try:
-            category_id       = request.GET.get("category")
-            location_id       = request.GET.get("location")
-            serving_price_id  = request.GET.get("serving_price")
+            category_id       = request.GET.get("categoryId")
+            location_id       = request.GET.get("locationId")
+            serving_price_id  = request.GET.get("servingPriceId")
 
-            q        = Q()
+            q = Q()
 
             if category_id:
                 q &= Q(category = category_id)
 
             if location_id:
-                q &= Q(location = location_id)
+                q &= Q(location_id = location_id)
 
             if serving_price_id:
-                q &= Q(serving_price = serving_price_id)
+                q &= Q(serving_price_id = serving_price_id)
 
             restaurants = [{
                     "id"          : restaurant.id,
