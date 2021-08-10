@@ -31,7 +31,7 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in menus],
-                "is_wished"      : is_wished,
+                "is_wished"      : restaurant.wishlist_set.exists(),
                 "reviews"         : [{
                     "id"  : review.id,
                     "user" : {
