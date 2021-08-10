@@ -1,4 +1,3 @@
-from   itertools          import chain
 import json, re, bcrypt, jwt
 
 from django.views         import View
@@ -39,10 +38,11 @@ class SearchView(View):
                     "id"          : restaurant.id,
                     "name"        : restaurant.name,
                     "address"     : restaurant.address,
+                    "is_wished"   : restaurant.wishlist_set.exists(),
                     "rating"      : reviews.aggregate(Avg('rating')),
                     "review"      : [{
                     "description" : review.description,
-                    "images"      : [{
+                    "image"       : [{
                     "image_url"   : imageobject.image
                 } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
                 } for review in reviews]
