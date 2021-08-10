@@ -13,25 +13,26 @@ from restaurants.models   import Category, Location, Menu, Restaurant
 class SearchView(View):
     def get(self, request):
         search = request.GET.get('search', None)
-        category_restaurants = []
-        menu_restaurants = []
-        restaurants = []
         results = []
+        restaurants = Restaurant.objects.none()
 
         if Category.objects.filter(name__contains=search).exists():
             categories = Category.objects.filter(name__contains=search)
             for category in categories:
-                category_restaurants = Restaurant.objects.filter(category_id=category.id)
+                restaurants = Restaurant.objects.filter(category_id=category.id)
 
         if Menu.objects.filter(item__contains=search).exists():
             menus = Menu.objects.filter(item__contains=search)
             for menu in menus:
-                menu_Restaurants = Restaurant.objects.filter(id=menu.restaurant.id)
+                restaurants = restaurants.union(Restaurant.objects.filter(id=menu.restaurant.id))
 
-        if Restaurant.objects.filter(address__contains=search, name__contains=search):
-            restaurants = Restaurant.objects.filter(address__contains=search, name__contains=search)
-        all_restaurant = list(chain(category_restaurants, menu_restaurants, restaurants))
-        for restaurant in all_restaurant:
+        if Restaurant.objects.filter(address__contains=search):
+            restaurants = restaurants.union(Restaurant.objects.filter(address__contains=search))
+
+        if Restaurant.objects.filter(name__contains=search):
+            restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
+
+        for restaurant in restaurants:
             reviews = Review.objects.filter(restaurant_id=restaurant.id)
             results.append(
                 {
