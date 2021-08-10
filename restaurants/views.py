@@ -5,6 +5,7 @@ from django.core.exceptions import FieldError
 
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
+from users.models           import WishList
 from users.utils            import login_decorator
 
 class RestaurantDetailView(View):
@@ -30,7 +31,8 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                "is_wished"      : restaurant.wishlist_set.exists(),
+                # "is_wished"      : WishList.objects.filter(user_id=request.user.id).exists(),
+                #  wish_count
                 "reviews"         : [{
                     "id"  : review.id,
                     "user" : {
