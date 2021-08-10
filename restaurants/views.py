@@ -28,6 +28,7 @@ class RestaurantDetailView(View):
                 "location"       : restaurant.location.area,
                 "serving_price"  : restaurant.serving_price.price,
                 "menus" : [{   
+                    "menu_id"    : menu.id,
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
