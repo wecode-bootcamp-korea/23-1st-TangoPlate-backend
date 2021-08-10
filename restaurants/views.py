@@ -32,15 +32,17 @@ class RestaurantDetailView(View):
                     "item_price" : menu.item_price
                 } for menu in menus],
                 "is_wished"      : is_wished,
-                "review"         : [{
-                                        "review_id"  : review.id,
-                                        "user_id"    : review.user.id,
-                                        "user_name"  : review.user.nickname,
-                                        "description": review.description,
-                                        "rating"     : review.rating,
-                                        "created_at" : review.created_at,
-                                        "images url" : review.reviewimage_set.last().image,
-                } for review in reviews]
+                "reviews"         : [{
+                    "id"  : review.id,
+                    "user" : {
+                        "id" : review.user.id,
+                        "name"  : review.user.nickname,
+                    },
+                    "description": review.description,
+                    "rating"     : review.rating,
+                    "created_at" : review.created_at,
+                    "images url" : review.reviewimage_set.last().image,
+                } for review in restaurant.review_set.all()]
             })
             return JsonResponse({"results": results}, status=201)
 
