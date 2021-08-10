@@ -10,6 +10,9 @@ from users.utils            import login_decorator
 class RestaurantDetailView(View):
     def get(self, request, restaurant_id):
         try:
+            if not Restaurant.objects.filter(id = restaurant_id).exists():
+                return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
+                
             restaurant         = Restaurant.objects.get(id = restaurant_id)
             reviews            = restaurant.review_set.all()
             is_wished          = restaurant.wishlist_set.exists()
