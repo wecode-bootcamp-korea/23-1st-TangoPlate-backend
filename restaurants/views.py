@@ -14,16 +14,12 @@ class RestaurantDetailView(View):
                 return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
                 
             restaurant         = Restaurant.objects.get(id = restaurant_id)
-            reviews            = restaurant.review_set.all()
-            is_wished          = restaurant.wishlist_set.exists()
-            menus              = restaurant.menu_set.all()
-            rating_num         = restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating']
             
             results = []
             results.append({
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
-                "rating"         : rating_num,
+                "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                 "restaurant_img" : reviews.last().reviewimage_set.last().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
@@ -33,7 +29,7 @@ class RestaurantDetailView(View):
                 "menus" : [{   
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
-                } for menu in menus],
+                } for menu in restaurant.menu_set.all()],
                 "is_wished"      : restaurant.wishlist_set.exists(),
                 "reviews"         : [{
                     "id"  : review.id,
@@ -62,7 +58,7 @@ class RestaurantListView(View):
             q = Q()
 
             if category_id:
-                q &= Q(category = category_id)
+                q &= Q(category_id = category_id)
 
             if location_id:
                 q &= Q(location_id = location_id)
