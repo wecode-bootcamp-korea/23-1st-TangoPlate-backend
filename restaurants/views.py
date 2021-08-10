@@ -27,10 +27,10 @@ class RestaurantDetailView(View):
                 "category"       : restaurant.category.name,
                 "location"       : restaurant.location.area,
                 "serving_price"  : restaurant.serving_price.price,
-                "menus"          : [{   
-                                        "item"       : menu.item, 
-                                        "item_price" : menu.item_price
-                                    } for menu in menus],
+                "menus" : [{   
+                    "item"       : menu.item, 
+                    "item_price" : menu.item_price
+                } for menu in menus],
                 "is_wished"      : is_wished,
                 "review"         : [{
                                         "review_id"  : review.id,
