@@ -54,7 +54,7 @@ class RestaurantListView(View):
             location_id       = request.GET.get("locationId")
             serving_price_id  = request.GET.get("servingPriceId")
 
-            q        = Q()
+            q = Q()
 
             if category_id:
                 q &= Q(category = category_id)
