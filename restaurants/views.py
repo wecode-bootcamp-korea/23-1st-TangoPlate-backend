@@ -10,37 +10,38 @@ from users.utils            import login_decorator
 class RestaurantDetailView(View):
     def get(self, request, restaurant_id):
         try:
+            if not Restaurant.objects.filter(id = restaurant_id).exists():
+                return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
+                
             restaurant         = Restaurant.objects.get(id = restaurant_id)
-            reviews            = restaurant.review_set.all()
-            is_wished          = restaurant.wishlist_set.exists()
-            menus              = restaurant.menu_set.all()
-            rating_num         = restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating']
             
             results = []
             results.append({
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
-                "rating"         : rating_num,
+                "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                 "restaurant_img" : reviews.last().reviewimage_set.last().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
                 "category"       : restaurant.category.name,
                 "location"       : restaurant.location.area,
                 "serving_price"  : restaurant.serving_price.price,
-                "menus"          : [{   
-                                        "item"       : menu.item, 
-                                        "item_price" : menu.item_price
-                                    } for menu in menus],
-                "is_wished"      : is_wished,
-                "review"         : [{
-                                        "review_id"  : review.id,
-                                        "user_id"    : review.user.id,
-                                        "user_name"  : review.user.nickname,
-                                        "description": review.description,
-                                        "rating"     : review.rating,
-                                        "created_at" : review.created_at,
-                                        "images url" : review.reviewimage_set.last().image,
-                } for review in reviews]
+                "menus" : [{   
+                    "item"       : menu.item, 
+                    "item_price" : menu.item_price
+                } for menu in restaurant.menu_set.all()],
+                "is_wished"      : restaurant.wishlist_set.exists(),
+                "reviews"         : [{
+                    "id"  : review.id,
+                    "user" : {
+                        "id" : review.user.id,
+                        "name"  : review.user.nickname,
+                    },
+                    "description": review.description,
+                    "rating"     : review.rating,
+                    "created_at" : review.created_at,
+                    "images url" : review.reviewimage_set.last().image,
+                } for review in restaurant.review_set.all()]
             })
             return JsonResponse({"results": results}, status=200)
 
@@ -50,25 +51,25 @@ class RestaurantDetailView(View):
 class RestaurantListView(View):
     def get(self, request):
         try:
-            category_id       = request.GET.get("category")
-            location_id       = request.GET.get("location")
-            serving_price_id  = request.GET.get("serving_price")
+            category_id       = request.GET.get("categoryId")
+            location_id       = request.GET.get("locationId")
+            serving_price_id  = request.GET.get("servingPriceId")
 
-            q        = Q()
+            q = Q()
 
             if category_id:
-                q &= Q(category = category_id)
+                q &= Q(category_id = category_id)
 
             if location_id:
-                q &= Q(location = location_id)
+                q &= Q(location_id = location_id)
 
             if serving_price_id:
-                q &= Q(serving_price = serving_price_id)
+                q &= Q(serving_price_id = serving_price_id)
 
             restaurants = [{
                     "id"          : restaurant.id,
                     "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.get(restaurant_id=restaurant.id).reviewimage_set.last().image,
+                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
                     "is_wished"   : restaurant.wishlist_set.exists(),
