@@ -20,7 +20,7 @@ class RestaurantDetailView(View):
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
                 "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
-                "restaurant_img" : reviews.last().reviewimage_set.last().image,
+                "restaurant_img" : restaurant.review_set.last().reviewimage_set.last().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
                 "category"       : restaurant.category.name,
