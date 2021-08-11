@@ -3,11 +3,16 @@ from django.http            import JsonResponse
 from django.db.models       import Avg, Q
 from django.core.exceptions import FieldError
 
+from users.models           import User
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
+from users.utils            import login_decorator
 class RestaurantDetailView(View):
+    @login_decorator
     def get(self, request, restaurant_id):
         try:
+            user = request.user
+            print(request.user)
             if not Restaurant.objects.filter(id = restaurant_id).exists():
                 return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
                 
@@ -28,7 +33,7 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                "is_wished"      : False,
+                "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
                 "reviews"        : [{
                     "id"         :  review.id,
                     "user" : {
@@ -48,6 +53,7 @@ class RestaurantDetailView(View):
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
 
 class RestaurantListView(View):
+    @login_decorator
     def get(self, request):
         try:
             category_id       = request.GET.get("categoryId")
@@ -71,6 +77,7 @@ class RestaurantListView(View):
                     "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
+                    "is_wished"   : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
                     "btn_toggle"  : False,
                     "review_id"   : restaurant.review_set.all().order_by('-created_at')[0].id,
                     "user_id"     : restaurant.review_set.all().order_by('-created_at')[0].user_id,
