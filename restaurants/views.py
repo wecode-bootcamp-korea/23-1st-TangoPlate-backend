@@ -5,17 +5,16 @@ from django.http            import JsonResponse
 from django.db.models       import Avg, Q
 from django.core.exceptions import FieldError
 
-from users.models           import User
+from users.models           import User, WishList
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
-from users.models           import User, WishList
 from users.utils            import login_decorator
 class RestaurantDetailView(View):
     @login_decorator
     def get(self, request, restaurant_id):
         try:
             user = request.user
-            print(request.user)
+
             if not Restaurant.objects.filter(id = restaurant_id).exists():
                 return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
                 
