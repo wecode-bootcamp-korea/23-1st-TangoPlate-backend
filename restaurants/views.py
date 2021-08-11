@@ -3,10 +3,16 @@ from django.http            import JsonResponse
 from django.db.models       import Avg, Q
 from django.core.exceptions import FieldError
 
+from users.models            import User
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
+from users.utils            import login_decorator
 class RestaurantDetailView(View):
+    @login_decorator
     def get(self, request, restaurant_id):
+
+        user = request.user
+
         try:
             if not Restaurant.objects.filter(id = restaurant_id).exists():
                 return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
@@ -28,7 +34,7 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                "is_wished"      : False,
+                "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
                 "reviews"        : [{
                     "id"         :  review.id,
                     "user" : {
