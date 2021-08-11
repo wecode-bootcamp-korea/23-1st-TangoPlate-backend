@@ -32,18 +32,19 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                # "is_wished"      : WishList.objects.filter(user_id=request.user.id).exists(),
+                # "is_wished"      : WishList.objects.filter(user_id=request.user.id).exists() if request.user is not None else False,
                 #  wish_count
                 "reviews"         : [{
                     "id"  : review.id,
                     "user" : {
+                        "email" : review.user.email,
                         "id" : review.user.id,
                         "name"  : review.user.nickname,
                     },
                     "description": review.description,
                     "rating"     : review.rating,
                     "created_at" : review.created_at,
-                    "images url" : review.reviewimage_set.last().image,
+                    "images_url" : review.reviewimage_set.last().image,
                 } for review in restaurant.review_set.all()]
             })
             return JsonResponse({"results": results}, status=200)
