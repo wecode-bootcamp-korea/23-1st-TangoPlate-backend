@@ -111,13 +111,14 @@ class SearchView(View):
         for restaurant in restaurants:
             results.append(
                 {
-                        "id"          : restaurant.id,
-                        "name"        : restaurant.name,
-                        "address"     : restaurant.address,
-                        "is_wished"   : restaurant.wishlist_set.exists(),
-                        "btn_toggle"  : False,
-                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                        "review"      : restaurant.first_review,
+                    "id"          : restaurant.id,
+                    "name"        : restaurant.name,
+                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                    "address"     : restaurant.address,
+                    "is_wished"   : restaurant.wishlist_set.exists(),
+                    "btn_toggle"  : False,
+                    "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                    "review"      : restaurant.first_review,
                 }
             )
 
