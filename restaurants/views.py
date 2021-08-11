@@ -35,11 +35,7 @@ class SearchView(View):
                         "is_wished"   : restaurant.wishlist_set.exists(),
                         "btn_toggle"  : False,
                         "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                        "review_id"   : restaurant.review_set.all()[0].id,
-                        "user_id"     : restaurant.review_set.all()[0].user_id,
-                        "user_name"   : restaurant.review_set.all()[0].user.nickname,
-                        "description" : restaurant.review_set.all()[0].description,
-                        "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                        "review"      : restaurant.first_review,
                 }
             )
 
