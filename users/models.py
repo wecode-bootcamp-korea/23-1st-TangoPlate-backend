@@ -9,14 +9,6 @@ class User(models.Model):
     class Meta:
         db_table = 'users'
 
-class Rating(models.Model):
-    user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
-    restaurant = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)
-    rating     = models.IntegerField()
-
-    class Meta:
-        db_table = 'ratings'
-
 class WishList(models.Model):
     user       = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
     restaurant = models.ForeignKey('restaurants.Restaurant', on_delete=models.CASCADE)

@@ -1,12 +1,15 @@
 import json, re, bcrypt, jwt
+from reviews.models import Review
 
 from django.views         import View
 from django.http          import JsonResponse
+from django.db.models     import Avg
 
 from users.models         import User
 from users.models         import WishList   
-from restaurants.models   import Restaurant
+from restaurants.models   import Category, Location, Restaurant
 from my_settings          import SECRET_KEY, const_algorithm
+from users.utils          import login_decorator
 
 class SignUpView(View):
     def post(self, request):
@@ -56,3 +59,29 @@ class SignInView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
+        
+class WishListView(View):
+    @login_decorator
+    def get(self, request):
+        user     = request.user
+        results  = []
+        wishlist = WishList.objects.filter(user_id=user.id)
+
+        if not wishlist.exists():
+            return JsonResponse({'MESSAGE':'NONE'}, status = 200)
+        
+        for wish in wishlist:
+            restaurants = Restaurant.objects.filter(id=wish.restaurant_id)
+            for restaurant in restaurants:
+                results.append(
+                    {
+                        'name'        : restaurant.name,
+                        'category'    : Category.objects.get(id=restaurant.category_id).name,
+                        'location'    : Location.objects.get(id=restaurant.location_id).area,
+                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                        "review"      : [{
+                        "images"      : [{"url" : image.image} for image in review.reviewimage_set.all()]
+                    } for review in restaurant.review_set.all()]
+                    }
+                )
+        return JsonResponse({'MESSAGE':results}, status=200)
