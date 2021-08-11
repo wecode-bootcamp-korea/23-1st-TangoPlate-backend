@@ -68,20 +68,17 @@ class WishListView(View):
         wishlist = WishList.objects.filter(user_id=user.id)
 
         if not wishlist.exists():
-            return JsonResponse({'MESSAGE':'NONE'}, status = 200)
+            return JsonResponse({'MESSAGE':results}, status = 200)
         
         for wish in wishlist:
-            restaurants = Restaurant.objects.filter(id=wish.restaurant_id)
-            for restaurant in restaurants:
-                results.append(
-                    {
-                        'name'        : restaurant.name,
-                        'category'    : Category.objects.get(id=restaurant.category_id).name,
-                        'location'    : Location.objects.get(id=restaurant.location_id).area,
-                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                        "review"      : [{
-                        "images"      : [{"url" : image.image} for image in review.reviewimage_set.all()]
-                    } for review in restaurant.review_set.all()]
-                    }
-                )
+            results.append(
+                {
+                    'id'          : wish.restaurant.id,
+                    'name'        : wish.restaurant.name,
+                    'category'    : wish.restaurant.category.name,
+                    'location'    : wish.restaurant.location.area,
+                    "rating"      : wish.restaurant.review_set.all().aggregate(Avg('rating')),
+                    "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
+                }
+            )
         return JsonResponse({'MESSAGE':results}, status=200)
