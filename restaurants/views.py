@@ -3,7 +3,7 @@ from django.http            import JsonResponse
 from django.db.models       import Avg, Q
 from django.core.exceptions import FieldError
 
-from users.models            import User
+from users.models           import User, WishList
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
 from users.utils            import login_decorator
@@ -54,6 +54,7 @@ class RestaurantDetailView(View):
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
 
 class RestaurantListView(View):
+    @login_decorator
     def get(self, request):
         try:
             category_id       = request.GET.get("categoryId")
@@ -78,10 +79,8 @@ class RestaurantListView(View):
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
                     "btn_toggle"  : False,
-                    "review_id"   : restaurant.review_set.all().order_by('-created_at')[0].id,
-                    "user_id"     : restaurant.review_set.all().order_by('-created_at')[0].user_id,
-                    "user_name"   : restaurant.review_set.all().order_by('-created_at')[0].user.nickname,
-                    "description" : restaurant.review_set.all().order_by('-created_at')[0].description,
+                    "is_wished"   : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                    "review"      : restaurant.latest_review
                 } for restaurant in Restaurant.objects.filter(q).order_by('name')]
             return JsonResponse({"restaurant" : restaurants}, status=200)
 
