@@ -5,8 +5,6 @@ from django.core.exceptions import FieldError
 
 from restaurants.models     import Restaurant
 from reviews.models         import Review, ReviewImage
-from users.utils            import login_decorator
-
 class RestaurantDetailView(View):
     def get(self, request, restaurant_id):
         try:
@@ -20,30 +18,32 @@ class RestaurantDetailView(View):
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
                 "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
-                "restaurant_img" : reviews.last().reviewimage_set.last().image,
+                "restaurant_img" : restaurant.review_set.last().reviewimage_set.last().image,
                 "address"        : restaurant.address,
                 "phone_number"   : restaurant.phone_number,
                 "category"       : restaurant.category.name,
                 "location"       : restaurant.location.area,
                 "serving_price"  : restaurant.serving_price.price,
-                "menus" : [{   
+                "menus" : [{
+                    "menu_id"    : menu.id,   
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                "is_wished"      : restaurant.wishlist_set.exists(),
-                "reviews"         : [{
-                    "id"  : review.id,
+                "is_wished"      : False,
+                "reviews"        : [{
+                    "id"         :  review.id,
                     "user" : {
-                        "id" : review.user.id,
-                        "name"  : review.user.nickname,
+                        "user_id" : review.user.id,
+                        "email"   : review.user.email,
+                        "name"    : review.user.nickname,
                     },
                     "description": review.description,
                     "rating"     : review.rating,
                     "created_at" : review.created_at,
-                    "images url" : review.reviewimage_set.last().image,
+                    "images_url" : review.reviewimage_set.last().image,
                 } for review in restaurant.review_set.all()]
             })
-            return JsonResponse({"results": results}, status=201)
+            return JsonResponse({"results": results}, status=200)
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
@@ -72,7 +72,6 @@ class RestaurantListView(View):
                     "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
                     "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"     : restaurant.address,
-                    "is_wished"   : restaurant.wishlist_set.exists(),
                     "btn_toggle"  : False,
                     "review_id"   : restaurant.review_set.all().order_by('-created_at')[0].id,
                     "user_id"     : restaurant.review_set.all().order_by('-created_at')[0].user_id,
