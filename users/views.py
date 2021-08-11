@@ -69,7 +69,7 @@ class WishView(View):
                     user_id       = User.objects.get(id = request.user.id).id,
                     restaurant_id = Restaurant.objects.get(id = restaurant_id).id
                 )
-            result = {"is_wished" : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if user else None}
+            result = {"is_wished" : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if request.user else None}
             return JsonResponse({'result' : result}, status=200)
 
         except KeyError:

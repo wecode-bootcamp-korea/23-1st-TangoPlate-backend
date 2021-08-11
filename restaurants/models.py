@@ -11,6 +11,10 @@ class Restaurant(models.Model):
     class Meta:
         db_table = 'restaurants'
 
+    # @property
+    # def first_review(self):
+    #     id = self.
+
 class Menu(models.Model):
     restaurant     = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
     item           = models.CharField(max_length=45)
