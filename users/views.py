@@ -7,6 +7,7 @@ from users.models         import User, WishList
 from users.utils          import login_decorator   
 from restaurants.models   import Restaurant
 from my_settings          import SECRET_KEY, const_algorithm
+from users.utils          import login_decorator
 
 class SignUpView(View):
     def post(self, request):

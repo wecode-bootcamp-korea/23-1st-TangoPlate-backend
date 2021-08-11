@@ -11,7 +11,7 @@ def login_decorator(func):
         try:
             token           = request.headers.get("authorization", None)
             if not token:
-                request.user = "test"
+                request.user = None
             else:
                 user            = jwt.decode(token, SECRET_KEY, algorithms='HS256')
                 request.user    = User.objects.get(id = user['id'])
