@@ -64,21 +64,17 @@ class WishListView(View):
     @login_decorator
     def get(self, request):
         user     = request.user
-        results  = []
         wishlist = WishList.objects.filter(user_id=user.id)
 
         if not wishlist.exists():
-            return JsonResponse({'MESSAGE':results}, status = 200)
+            return JsonResponse({'MESSAGE':list()}, status = 404)
         
-        for wish in wishlist:
-            results.append(
-                {
-                    'id'          : wish.restaurant.id,
-                    'name'        : wish.restaurant.name,
-                    'category'    : wish.restaurant.category.name,
-                    'location'    : wish.restaurant.location.area,
-                    "rating"      : wish.restaurant.review_set.all().aggregate(Avg('rating')),
-                    "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
-                }
-            )
+        results = [{
+                'id'          : wish.restaurant.id,
+                'name'        : wish.restaurant.name,
+                'category'    : wish.restaurant.category.name,
+                'location'    : wish.restaurant.location.area,
+                "rating"      : wish.restaurant.review_set.all().aggregate(Avg('rating')),
+                "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
+            } for wish in wishlist ]
         return JsonResponse({'MESSAGE':results}, status=200)
