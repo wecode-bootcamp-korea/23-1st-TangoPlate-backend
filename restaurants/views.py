@@ -11,6 +11,7 @@ from users.utils            import login_decorator
 class RestaurantDetailView(View):
     def get(self, request, restaurant_id):
         try:
+            request.user = None
             if not Restaurant.objects.filter(id = restaurant_id).exists():
                 return JsonResponse({"MESSAGE": "NOT_EXIST"}, status=404)
                 
@@ -32,7 +33,7 @@ class RestaurantDetailView(View):
                     "item"       : menu.item, 
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
-                # "is_wished"      : WishList.objects.filter(user_id=request.user.id).exists() if request.user is not None else False,
+                "is_wished"      : WishList.objects.filter(user_id=request.user.id).exists() if request.user is not None else False,
                 #  wish_count
                 "reviews"         : [{
                     "id"  : review.id,
