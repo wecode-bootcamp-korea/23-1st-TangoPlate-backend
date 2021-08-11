@@ -11,9 +11,18 @@ class Restaurant(models.Model):
     class Meta:
         db_table = 'restaurants'
 
-    # @property
-    # def first_review(self):
-    #     id = self.
+    @property
+    def first_review(self):
+        if not self.review_set.exists():
+            return None
+
+        return {
+            "id"          : self.review_set.filter()[0].id,
+            "user_id"     : self.review_set.filter()[0].user_id,
+            "user_name"   : self.review_set.filter()[0].user.nickname,
+            "description" : self.review_set.filter()[0].description,
+            "image"       : self.review_set.filter()[0].reviewimage_set.last().image,
+        }
 
 class Menu(models.Model):
     restaurant     = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
