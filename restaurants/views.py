@@ -4,7 +4,6 @@ from django.views         import View
 from django.http          import JsonResponse
 from django.db.models     import Q, Avg
 
-
 from reviews.models       import Review, ReviewImage
 from users.models         import User, WishList
 from restaurants.models   import Category, Location, Menu, Restaurant
@@ -16,19 +15,15 @@ class SearchView(View):
         restaurants = Restaurant.objects.none()
 
         if Category.objects.filter(name__contains=search).exists():
-            categories = Category.objects.filter(name__contains=search)
-            for category in categories:
-                restaurants = Restaurant.objects.filter(category_id=category.id)
+            restaurants = Restaurant.objects.filter(category__name__contains=search)
 
         if Menu.objects.filter(item__contains=search).exists():
-            menus = Menu.objects.filter(item__contains=search)
-            for menu in menus:
-                restaurants = restaurants.union(Restaurant.objects.filter(id=menu.restaurant.id))
+            restaurants = restaurants.union(Restaurant.objects.filter(menu__item__contains=search))
 
-        if Restaurant.objects.filter(address__contains=search):
+        if Restaurant.objects.filter(address__contains=search).exists():
             restaurants = restaurants.union(Restaurant.objects.filter(address__contains=search))
 
-        if Restaurant.objects.filter(name__contains=search):
+        if Restaurant.objects.filter(name__contains=search).exists():
             restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
 
         for restaurant in restaurants:
@@ -41,11 +36,9 @@ class SearchView(View):
                     "is_wished"   : restaurant.wishlist_set.exists(),
                     "rating"      : reviews.aggregate(Avg('rating')),
                     "review"      : [{
-                    "description" : review.description,
-                    "image"       : [{
-                    "image_url"   : imageobject.image
-                } for imageobject in ReviewImage.objects.filter(review_id=review.id)]
-                } for review in reviews]
+                        "description" : review.description,
+                        "images"      : [{"url" : image.url} for image in review.image_set.all()]
+                    } for review in restaurant.review_set.all()]
                 }
             )
 
