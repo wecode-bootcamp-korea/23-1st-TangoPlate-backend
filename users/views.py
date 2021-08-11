@@ -56,3 +56,28 @@ class SignInView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
+
+class WishView(View):
+    @login_decorator
+    def post(self, request, restaurant_id):
+        try: 
+            if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
+                WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
+                result=[]
+                result.append({
+                "is_wished"      : Restaurant.objects.get(id = restaurant_id).wishlist_set.exists(),
+                })
+                return JsonResponse({'result' : result}, status=200)
+
+            WishList.objects.create(
+                user_id       = User.objects.get(id = request.user.id).id,
+                restaurant_id = Restaurant.objects.get(id = restaurant_id).id
+            )
+            result=[]
+            result.append({
+                "is_wished"      : Restaurant.objects.get(id = restaurant_id).wishlist_set.exists(),
+            })
+            return JsonResponse({'result' : result}, status=201)
+
+        except KeyError:
+            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status = 400)
