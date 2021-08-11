@@ -13,8 +13,7 @@ class RestaurantDetailView(View):
                 
             restaurant         = Restaurant.objects.get(id = restaurant_id)
             
-            results = []
-            results.append({
+            result = {
                 "id"             : restaurant.id,
                 "name"           : restaurant.name,
                 "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
@@ -42,8 +41,8 @@ class RestaurantDetailView(View):
                     "created_at" : review.created_at,
                     "images_url" : review.reviewimage_set.last().image,
                 } for review in restaurant.review_set.all()]
-            })
-            return JsonResponse({"results": results}, status=200)
+            }
+            return JsonResponse({"result": result}, status=200)
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
