@@ -27,7 +27,6 @@ class SearchView(View):
             restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
 
         for restaurant in restaurants:
-            reviews = Review.objects.filter(restaurant_id=restaurant.id)
             results.append(
                 {
                         "id"          : restaurant.id,
@@ -35,12 +34,12 @@ class SearchView(View):
                         "address"     : restaurant.address,
                         "is_wished"   : restaurant.wishlist_set.exists(),
                         "btn_toggle"  : False,
-                        "rating"      : reviews.aggregate(Avg('rating')),
-                        "review"      : [{
-                        "user_name"   : review.user.nickname,
-                        "description" : review.description,
-                        "images"      : [{"url" : image.image} for image in review.reviewimage_set.all()]
-                    } for review in restaurant.review_set.all()]
+                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                        "review_id"   : restaurant.review_set.all()[0].id,
+                        "user_id"     : restaurant.review_set.all()[0].user_id,
+                        "user_name"   : restaurant.review_set.all()[0].user.nickname,
+                        "description" : restaurant.review_set.all()[0].description,
+                        "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
                 }
             )
 
