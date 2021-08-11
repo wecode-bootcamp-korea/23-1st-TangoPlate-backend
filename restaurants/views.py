@@ -12,6 +12,9 @@ from users.utils            import login_decorator
 class RestaurantDetailView(View):
     @login_decorator
     def get(self, request, restaurant_id):
+
+        user = request.user
+
         try:
             user = request.user
 
@@ -74,17 +77,14 @@ class RestaurantListView(View):
                 q &= Q(serving_price_id = serving_price_id)
 
             restaurants = [{
-                    "id"          : restaurant.id,
-                    "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
-                    "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
-                    "address"     : restaurant.address,
-                    "is_wished"   : request.user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if request.user else None,
-                    "btn_toggle"  : False,
-                    "review_id"   : restaurant.review_set.all().order_by('-created_at')[0].id if restaurant.review_set.all().order_by('-created_at')[0] else None,
-                    "user_id"     : restaurant.review_set.all().order_by('-created_at')[0].user_id if restaurant.review_set.all().order_by('-created_at')[0] else None,
-                    "user_name"   : restaurant.review_set.all().order_by('-created_at')[0].user.nickname if restaurant.review_set.all().order_by('-created_at')[0] else None,
-                    "description" : restaurant.review_set.all().order_by('-created_at')[0].description if restaurant.review_set.all().order_by('-created_at')[0] else None,
+                    "id"             : restaurant.id,
+                    "name"           : restaurant.name,
+                    "image"          : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                    "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
+                    "address"        : restaurant.address,
+                    "btn_toggle"     : False,
+                    "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                    "latest_review"  : restaurant.latest_review
                 } for restaurant in Restaurant.objects.filter(q).order_by('name')]
             return JsonResponse({"restaurant" : restaurants}, status=200)
 

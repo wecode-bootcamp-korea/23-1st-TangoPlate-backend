@@ -10,6 +10,19 @@ class Restaurant(models.Model):
 
     class Meta:
         db_table = 'restaurants'
+    
+    @property
+    def latest_review(self):
+        if not self.review_set.exists():
+            return None
+
+        return {
+            "id"          : self.review_set.last().id,
+            "user_id"     : self.review_set.last().user_id,
+            "user_name"   : self.review_set.last().user_nickname,
+            "description" : self.review_set.last().description,
+            "image"       : self.review_set.last().reviewimage_set.last().image
+        }
 
     @property
     def first_review(self):
