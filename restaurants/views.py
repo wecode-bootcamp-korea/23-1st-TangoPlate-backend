@@ -73,14 +73,14 @@ class RestaurantListView(View):
                 q &= Q(serving_price_id = serving_price_id)
 
             restaurants = [{
-                    "id"          : restaurant.id,
-                    "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
-                    "rating"      : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
-                    "address"     : restaurant.address,
-                    "btn_toggle"  : False,
-                    "is_wished"   : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
-                    "review"      : restaurant.latest_review
+                    "id"             : restaurant.id,
+                    "name"           : restaurant.name,
+                    "image"          : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                    "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
+                    "address"        : restaurant.address,
+                    "btn_toggle"     : False,
+                    "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                    "latest_review"  : restaurant.latest_review
                 } for restaurant in Restaurant.objects.filter(q).order_by('name')]
             return JsonResponse({"restaurant" : restaurants}, status=200)
 
