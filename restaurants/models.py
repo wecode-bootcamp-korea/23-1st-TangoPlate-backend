@@ -19,7 +19,7 @@ class Restaurant(models.Model):
         return {
             "id"          : self.review_set.last().id,
             "user_id"     : self.review_set.last().user_id,
-            "user_name"   : self.review_set.last().user_nickname,
+            "user_name"   : self.review_set.last().user.nickname,
             "description" : self.review_set.last().description,
             "image"       : self.review_set.last().reviewimage_set.last().image
         }

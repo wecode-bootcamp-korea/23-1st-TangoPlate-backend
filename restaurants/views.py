@@ -2,7 +2,7 @@ import json, re, bcrypt, jwt
 
 from django.views           import View
 from django.http            import JsonResponse
-from django.db.models       import Avg, Q
+from django.db.models       import Avg, Q, F, Count
 from django.core.exceptions import FieldError
 
 from users.models           import User, WishList
@@ -12,9 +12,6 @@ from users.utils            import login_decorator
 class RestaurantDetailView(View):
     @login_decorator
     def get(self, request, restaurant_id):
-
-        user = request.user
-
         try:
             user = request.user
 
@@ -39,6 +36,7 @@ class RestaurantDetailView(View):
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
                 "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                "wish_count"     : WishList.objects.filter(restaurant_id = restaurant_id).annotate(cnt=Count('user_id')).count(),
                 "reviews"        : [{
                     "id"         :  review.id,
                     "user" : {
@@ -61,6 +59,8 @@ class RestaurantListView(View):
     @login_decorator
     def get(self, request):
         try:
+            user = request.user
+
             category_id       = request.GET.get("categoryId")
             location_id       = request.GET.get("locationId")
             serving_price_id  = request.GET.get("servingPriceId")
@@ -85,11 +85,12 @@ class RestaurantListView(View):
                     "btn_toggle"     : False,
                     "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
                     "latest_review"  : restaurant.latest_review
-                } for restaurant in Restaurant.objects.filter(q).order_by('name')]
+                } for restaurant in Restaurant.objects.filter(q).order_by('name')[:40]]
             return JsonResponse({"restaurant" : restaurants}, status=200)
 
         except FieldError:
             return JsonResponse({"RESULT" : "FILTER_ERROR"}, status=404)
+
 class SearchView(View):
     def get(self, request):
         search = request.GET.get('search', None)
