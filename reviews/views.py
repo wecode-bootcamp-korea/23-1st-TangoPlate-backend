@@ -37,10 +37,10 @@ class ReviewView(View):
         data = json.loads(request.body)
         user = request.user
 
-        if not Review.objects.filter(id=review_id).exists():
+        if not Review.objects.filter(id=review_id, user_id=user.id).exists():
             return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
 
-        Review.objects.filter(id=review_id).update(
+        Review.objects.filter(id=review_id, user_id=user.id).update(
                 restaurant_id = restaurant_id,
                 user_id       = user.id,
                 description   = data['description'],
@@ -58,9 +58,9 @@ class ReviewView(View):
     def delete(self, request, restaurant_id, review_id):
         user = request.user
 
-        if not Review.objects.filter(id=review_id).exists():
+        if not Review.objects.filter(id=review_id, user_id=user.id).exists():
             return JsonResponse({'MESSAGE':'NOT_EXISTS'}, status=400)
 
-        Review.objects.get(id=review_id).delete()
+        Review.objects.get(id=review_id, user_id=user.id).delete()
 
         return JsonResponse({"MESSAGE": 'SUCCESS'}, status=204)
