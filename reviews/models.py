@@ -7,7 +7,7 @@ class Review(models.Model):
     created_at  = models.DateField(auto_now_add=True)
     updated_at  = models.DateField(auto_now=True, null=True)
     rating          = models.PositiveIntegerField(null=True)
-
+    
     class Meta:
         db_table = 'reviews'
 
