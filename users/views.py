@@ -90,15 +90,15 @@ class WishListView(View):
         wishlist = WishList.objects.filter(user_id=user.id)
 
         if not wishlist.exists():
-            return JsonResponse({'MESSAGE':list()}, status = 404)
+            return JsonResponse({'MESSAGE': 'no_wish'}, status = 404)
         
         results = [{
                 'id'          : wish.restaurant.id,
                 'name'        : wish.restaurant.name,
                 'category'    : wish.restaurant.category.name,
                 'location'    : wish.restaurant.location.area,
-                "btn_toggle"  : False,
-                "rating"      : wish.restaurant.review_set.all().aggregate(Avg('rating')),
+                "is_wished"   : user.wishlist_set.filter(restaurant_id=wish.restaurant.id).exists() if user else None,
+                "rating"      : wish.restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                 "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
             } for wish in wishlist ]
         return JsonResponse({'MESSAGE':results}, status=200)

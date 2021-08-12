@@ -84,7 +84,7 @@ class RestaurantListView(View):
                     "rating"         : restaurant.review_set.all().aggregate(rating = Avg('rating'))['rating'],
                     "address"        : restaurant.address,
                     "btn_toggle"     : False,
-                    "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                    "is_wished"      : request.user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if request.user else None,
                     "latest_review"  : restaurant.latest_review
                 } for restaurant in Restaurant.objects.filter(q).order_by('name')]
             return JsonResponse({"restaurant" : restaurants}, status=200)
