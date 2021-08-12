@@ -6,7 +6,7 @@ from django.db.models       import Avg, Q, F, Count
 from django.core.exceptions import FieldError
 
 from users.models           import User, WishList
-from restaurants.models     import Restaurant
+from restaurants.models     import Restaurant, Category, Menu, Location, ServingPrice
 from reviews.models         import Review, ReviewImage
 from users.utils            import login_decorator
 class RestaurantDetailView(View):
@@ -108,16 +108,14 @@ class SearchView(View):
         if Restaurant.objects.filter(name__contains=search).exists():
             restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
 
-        for restaurant in restaurants:
-            results = [{
-                        "id"          : restaurant.id,
-                        "name"        : restaurant.name,
-                        "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
-                        "address"     : restaurant.address,
-                        "is_wished"   : restaurant.wishlist_set.exists(),
-                        "btn_toggle"  : False,
-                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                        "review"      : restaurant.first_review,
-                    }
-                )
-        return JsonResponse({'MESSAGE':results}, status=200)
+        results = [{
+                    "id"          : restaurant.id,
+                    "name"        : restaurant.name,
+                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                    "address"     : restaurant.address,
+                    "is_wished"   : restaurant.wishlist_set.exists(),
+                    "btn_toggle"  : False,
+                    "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                    "review"      : restaurant.first_review,
+                }for restaurant in restaurants]
+        return JsonResponse({'restaurant':results}, status=200)

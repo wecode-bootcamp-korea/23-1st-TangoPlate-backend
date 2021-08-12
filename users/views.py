@@ -3,12 +3,14 @@ import json, re, bcrypt, jwt
 from django.views         import View
 from django.http          import JsonResponse
 from django.db.models     import Avg
+from django.core.exceptions import ObjectDoesNotExist
 
 from users.models         import User, WishList  
 from reviews.models       import Review
 from restaurants.models   import Category, Location, Restaurant
 from my_settings          import SECRET_KEY, const_algorithm
 from users.utils          import login_decorator
+
 
 class SignUpView(View):
     def post(self, request):
@@ -60,22 +62,42 @@ class SignInView(View):
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
 
 class WishView(View):
+    #@login_decorator
+    # def post(self, request, restaurant_id):
+    #     try:
+    #         if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
+    #             WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
+            
+    #         if not WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
+    #             WishList.objects.create(
+    #                 user_id       = User.objects.get(id = request.user.id).id,
+    #                 restaurant_id = Restaurant.objects.get(id = restaurant_id).id
+    #             )
+    #         result = {"is_wished" : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if request.user else None}
+    #         return JsonResponse({'result' : result}, status=200)
+
+    #     except KeyError:
+    #         return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status = 400)
     @login_decorator
-    def post(self, request, restaurant_id):
-        try:
+    def delete(self, request, restaurant_id):
+        try: 
             if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
                 WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
-            
+            return JsonResponse({'MESSAGE' : 'WISH_REMOVED'}, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message" : "NOT_EXIST"}, status=400)
+        
+    @login_decorator
+    def post(self, request, restaurant_id):
+        try:             
             if not WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
                 WishList.objects.create(
                     user_id       = User.objects.get(id = request.user.id).id,
                     restaurant_id = Restaurant.objects.get(id = restaurant_id).id
                 )
-            result = {"is_wished" : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if request.user else None}
-            return JsonResponse({'result' : result}, status=200)
-
-        except KeyError:
-            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status = 400)
+            return JsonResponse({'MESSAGE' : 'WISH_ADDED'}, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message" : "NOT_EXIST"}, status=400)
         
 class WishListView(View):
     @login_decorator
