@@ -94,7 +94,6 @@ class RestaurantListView(View):
 class SearchView(View):
     def get(self, request):
         search = request.GET.get('search', None)
-        results = []
         restaurants = Restaurant.objects.none()
 
         if Category.objects.filter(name__contains=search).exists():
@@ -110,17 +109,15 @@ class SearchView(View):
             restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
 
         for restaurant in restaurants:
-            results.append(
-                {
-                    "id"          : restaurant.id,
-                    "name"        : restaurant.name,
-                    "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
-                    "address"     : restaurant.address,
-                    "is_wished"   : restaurant.wishlist_set.exists(),
-                    "btn_toggle"  : False,
-                    "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                    "review"      : restaurant.first_review,
-                }
-            )
-
+            results = [{
+                        "id"          : restaurant.id,
+                        "name"        : restaurant.name,
+                        "image"       : restaurant.review_set.filter(restaurant_id=restaurant.id)[0].reviewimage_set.last().image,
+                        "address"     : restaurant.address,
+                        "is_wished"   : restaurant.wishlist_set.exists(),
+                        "btn_toggle"  : False,
+                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                        "review"      : restaurant.first_review,
+                    }
+                )
         return JsonResponse({'MESSAGE':results}, status=200)
