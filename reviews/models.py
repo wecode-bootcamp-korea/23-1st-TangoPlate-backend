@@ -12,7 +12,7 @@ class Review(models.Model):
         db_table = 'reviews'
 
 class ReviewImage(models.Model):
-    review     = models.ForeignKey('Review',on_delete=models.SET_NULL, null=True)
+    review     = models.ForeignKey('Review',on_delete=models.CASCADE)
     image      = models.URLField(max_length=500)
     
     class Meta:

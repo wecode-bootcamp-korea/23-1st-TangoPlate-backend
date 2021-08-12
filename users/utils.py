@@ -24,4 +24,5 @@ def login_decorator(func):
         except ObjectDoesNotExist:
             return JsonResponse({"message" : "INVALID_USER"}, status=400)
 
-    return wrapper
+    return wrapper 
+

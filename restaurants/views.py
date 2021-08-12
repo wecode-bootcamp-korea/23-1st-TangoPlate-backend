@@ -1,3 +1,4 @@
+
 from django.views           import View
 from django.http            import JsonResponse
 from django.db.models       import Avg, Q
@@ -86,3 +87,4 @@ class RestaurantListView(View):
 
         except FieldError:
             return JsonResponse({"RESULT" : "FILTER_ERROR"}, status=404)
+
