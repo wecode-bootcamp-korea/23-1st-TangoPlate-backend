@@ -6,12 +6,13 @@ class Review(models.Model):
     description = models.CharField(max_length=500, null=True)
     created_at  = models.DateField(auto_now_add=True)
     updated_at  = models.DateField(auto_now=True, null=True)
-
+    rating      = models.PositiveIntegerField(null=True)
+    
     class Meta:
         db_table = 'reviews'
 
 class ReviewImage(models.Model):
-    review     = models.ForeignKey('Review',on_delete=models.SET_NULL, null=True)
+    review     = models.ForeignKey('Review',on_delete=models.CASCADE)
     image      = models.URLField(max_length=500)
     
     class Meta:
