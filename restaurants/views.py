@@ -11,7 +11,6 @@ from restaurants.models   import Category, Location, Menu, Restaurant
 class SearchView(View):
     def get(self, request):
         search = request.GET.get('search', None)
-        results = []
         restaurants = Restaurant.objects.none()
 
         if Category.objects.filter(name__contains=search).exists():
@@ -26,17 +25,14 @@ class SearchView(View):
         if Restaurant.objects.filter(name__contains=search).exists():
             restaurants = restaurants.union(Restaurant.objects.filter(name__contains=search))
 
-        for restaurant in restaurants:
-            results.append(
-                {
-                        "id"          : restaurant.id,
-                        "name"        : restaurant.name,
-                        "address"     : restaurant.address,
-                        "is_wished"   : restaurant.wishlist_set.exists(),
-                        "btn_toggle"  : False,
-                        "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
-                        "review"      : restaurant.first_review,
-                }
-            )
+        results = [{
+                    "id"          : restaurant.id,
+                    "name"        : restaurant.name,
+                    "address"     : restaurant.address,
+                    "is_wished"   : restaurant.wishlist_set.exists(),
+                    "btn_toggle"  : False,
+                    "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
+                    "review"      : restaurant.first_review,
+            } for restaurant in restaurants]
 
         return JsonResponse({'MESSAGE':results}, status=200)
