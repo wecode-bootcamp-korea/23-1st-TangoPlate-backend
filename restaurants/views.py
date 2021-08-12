@@ -118,4 +118,5 @@ class SearchView(View):
                     "rating"      : restaurant.review_set.all().aggregate(Avg('rating')),
                     "review"      : restaurant.first_review,
                 }for restaurant in restaurants]
-        return JsonResponse({'restaurant':results}, status=200)
+        
+        return JsonResponse({'MESSAGE':results}, status=200)
