@@ -11,6 +11,7 @@ from users.utils          import login_decorator
 
 class ReviewCreateView(View):
     @login_decorator
+    @transaction.atomic
     def post(self, request, restaurant_id):
         try:
             data             = json.loads(request.body)
