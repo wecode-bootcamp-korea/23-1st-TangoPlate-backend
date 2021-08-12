@@ -74,6 +74,7 @@ class WishListView(View):
                 'name'        : wish.restaurant.name,
                 'category'    : wish.restaurant.category.name,
                 'location'    : wish.restaurant.location.area,
+                "btn_toggle"  : False,
                 "rating"      : wish.restaurant.review_set.all().aggregate(Avg('rating')),
                 "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
             } for wish in wishlist ]
