@@ -59,7 +59,30 @@ class SignInView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status = 400)
+
+class WishView(View):
+    @login_decorator
+    def delete(self, request, restaurant_id):
+        try: 
+            if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
+                WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
+            return JsonResponse({'MESSAGE' : 'WISH_REMOVED'}, status=200)
+
+        except ObjectDoesNotExist:
+            return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)
         
+    @login_decorator
+    def post(self, request, restaurant_id):
+        try:             
+            if not WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
+                WishList.objects.create(
+                    user_id       = User.objects.get(id = request.user.id).id,
+                    restaurant_id = Restaurant.objects.get(id = restaurant_id).id
+                )
+            return JsonResponse({'MESSAGE' : 'WISH_ADDED'}, status=200)
+
+        except ObjectDoesNotExist:
+            return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)        
 class WishListView(View):
     @login_decorator
     def get(self, request):
@@ -79,3 +102,4 @@ class WishListView(View):
                 "images"      : wish.restaurant.review_set.filter(restaurant_id=wish.restaurant.id)[0].reviewimage_set.last().image,
             } for wish in wishlist ]
         return JsonResponse({'MESSAGE':results}, status=200)
+
