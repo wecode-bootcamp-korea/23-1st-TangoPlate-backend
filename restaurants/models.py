@@ -24,6 +24,19 @@ class Restaurant(models.Model):
             "image"       : self.review_set.last().reviewimage_set.last().image
         }
 
+    @property
+    def first_review(self):
+        if not self.review_set.exists():
+            return None
+
+        return {
+            "id"          : self.review_set.filter()[0].id,
+            "user_id"     : self.review_set.filter()[0].user_id,
+            "user_name"   : self.review_set.filter()[0].user.nickname,
+            "description" : self.review_set.filter()[0].description,
+            "image"       : self.review_set.filter()[0].reviewimage_set.last().image,
+        }
+
 class Menu(models.Model):
     restaurant     = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
     item           = models.CharField(max_length=45)
