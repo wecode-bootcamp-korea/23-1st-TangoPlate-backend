@@ -4,10 +4,10 @@ from django.views         import View
 from django.http          import JsonResponse
 from django.db.models     import Avg
 
-from users.models         import User
-from users.models         import WishList   
+from users.models         import User, WishList   
 from reviews.models       import Review
 from restaurants.models   import Category, Location, Restaurant
+
 from my_settings          import SECRET_KEY, const_algorithm
 from users.utils          import login_decorator
 

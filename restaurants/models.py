@@ -10,6 +10,19 @@ class Restaurant(models.Model):
 
     class Meta:
         db_table = 'restaurants'
+    
+    @property
+    def latest_review(self):
+        if not self.review_set.exists():
+            return None
+
+        return {
+            "id"          : self.review_set.last().id,
+            "user_id"     : self.review_set.last().user_id,
+            "user_name"   : self.review_set.last().user_nickname,
+            "description" : self.review_set.last().description,
+            "image"       : self.review_set.last().reviewimage_set.last().image
+        }
 
     @property
     def first_review(self):
@@ -27,7 +40,7 @@ class Restaurant(models.Model):
 class Menu(models.Model):
     restaurant     = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
     item           = models.CharField(max_length=45)
-    item_price     = models.DecimalField(max_digits= 10, decimal_places=1)
+    item_price     = models.DecimalField(max_digits= 10, decimal_places=0)
 
     class Meta:
         db_table = 'menus'
