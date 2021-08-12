@@ -35,6 +35,7 @@ class RestaurantDetailView(View):
                     "item_price" : menu.item_price
                 } for menu in restaurant.menu_set.all()],
                 "is_wished"      : user.wishlist_set.filter(restaurant_id=restaurant.id).exists() if user else None,
+                "wish_count"     : WishList.objects.filter(restaurant_id = restaurant_id).annotate(cnt=Count('user_id')).count(),
                 "reviews"        : [{
                     "id"         :  review.id,
                     "user" : {
