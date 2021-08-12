@@ -63,10 +63,10 @@ class WishView(View):
         try: 
             if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
                 WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
-            result = {"is_wished"      : Restaurant.objects.get(id = restaurant_id).wishlist_set.exists()}
-            return JsonResponse({'result' : result}, status=200)
+            return JsonResponse({'MESSAGE' : 'WISH_REMOVED'}, status=200)
+
         except ObjectDoesNotExist:
-            return JsonResponse({"message" : "NOT_EXIST"}, status=400)
+            return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)
         
     @login_decorator
     def post(self, request, restaurant_id):
@@ -76,7 +76,7 @@ class WishView(View):
                     user_id       = User.objects.get(id = request.user.id).id,
                     restaurant_id = Restaurant.objects.get(id = restaurant_id).id
                 )
-            result = {"is_wished"      : Restaurant.objects.get(id = restaurant_id).wishlist_set.exists()}
-            return JsonResponse({'result' : result}, status=200)
+            return JsonResponse({'MESSAGE' : 'WISH_ADDED'}, status=200)
+
         except ObjectDoesNotExist:
-            return JsonResponse({"message" : "NOT_EXIST"}, status=400)
+            return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)
