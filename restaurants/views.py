@@ -1,7 +1,7 @@
 
 from django.views           import View
 from django.http            import JsonResponse
-from django.db.models       import Avg, Q
+from django.db.models       import Avg, Q, Count
 from django.core.exceptions import FieldError
 
 from users.models           import User, WishList
