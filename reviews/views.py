@@ -77,4 +77,4 @@ class ReviewView(View):
 
         Review.objects.get(id=review_id, user_id=user.id).delete()
 
-        return JsonResponse({"MESSAGE": 'SUCCESS'}, status=204)
+        return JsonResponse({"MESSAGE": 'SUCCESS'}, status=200)

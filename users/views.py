@@ -3,6 +3,7 @@ import json, re, bcrypt, jwt
 from django.views         import View
 from django.http          import JsonResponse
 from django.db.models     import Avg
+from django.core.exceptions import ObjectDoesNotExist
 
 from users.models         import User, WishList   
 from reviews.models       import Review
@@ -66,7 +67,9 @@ class WishView(View):
         try: 
             if WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).exists():
                 WishList.objects.filter(user_id = request.user.id, restaurant_id=restaurant_id).delete()
-            return JsonResponse({'MESSAGE' : 'WISH_REMOVED'}, status=200)
+            result = {"is_wished"      : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if request.user else None}
+            # return JsonResponse({'MESSAGE' : 'WISH_REMOVED'}, status=200)
+            return JsonResponse({'MESSAGE' : result}, status=200)
 
         except ObjectDoesNotExist:
             return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)
@@ -79,7 +82,9 @@ class WishView(View):
                     user_id       = User.objects.get(id = request.user.id).id,
                     restaurant_id = Restaurant.objects.get(id = restaurant_id).id
                 )
-            return JsonResponse({'MESSAGE' : 'WISH_ADDED'}, status=200)
+            # return JsonResponse({'MESSAGE' : 'WISH_ADDED'}, status=200)
+            result = {"is_wished"      : request.user.wishlist_set.filter(restaurant_id=restaurant_id).exists() if request.user else None}
+            return JsonResponse({'MESSAGE' : result}, status=200)
 
         except ObjectDoesNotExist:
             return JsonResponse({'MESSAGE' : "NOT_EXIST"}, status=404)        
