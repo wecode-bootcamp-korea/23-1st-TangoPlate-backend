@@ -9,7 +9,7 @@
   <br>
 - B.E<br>
   [고유영](https://github.com/lunayyko) : 망고 플레이트 제안자 / 정신적 지주이자 우리들의 PM<br>
-  [한승훈](https://github.com/Samdaso-o) : B.E 능력자 / 다른 조에서도 눈독 들이고 있는 B.E top class<br>
+  [한승훈](https://github.com/Samdaso-o) : B.E 능력자 / 다른 조에서도 눈독 들이고 있는 B.E top class/ 존잘남<br> 
   <br>
 
 ## What is Tango Plate Project?
@@ -23,7 +23,7 @@
 ### 개발 인원 및 기간
 
 - 개발기간 : 2021/8/2 ~ 2021/8/13
-- 개발 인원 : 프론트엔드 4명, 백엔드 2명
+- 개발 인원 : 프론트엔드 3명, 백엔드 2명
 - [B.E github 링크](https://github.com/wecode-bootcamp-korea/23-1st-TangoPlate-backend)
 
 ### 프로젝트 선정이유
