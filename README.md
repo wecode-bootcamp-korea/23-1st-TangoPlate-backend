@@ -24,7 +24,7 @@
 
 - 개발기간 : 2021/8/2 ~ 2021/8/13
 - 개발 인원 : 프론트엔드 3명, 백엔드 2명
-- [B.E github 링크](https://github.com/wecode-bootcamp-korea/23-1st-TangoPlate-backend)
+- [F.E github 링크](https://github.com/wecode-bootcamp-korea/23-1st-TangoPlate-frontend)
 
 ### 프로젝트 선정이유
 
@@ -57,10 +57,9 @@
 
 #### 검색 페이지
 
-- 키워드(카테고리, 지역명) 필터링.
-- 메뉴명으로 검색
-- 리뷰순, 평점순, 가격대에 대한 세부 필터링.
-- 페이지네이션.
+- 키워드(카테고리, 지역, 가격대별) 필터
+- 메뉴, 주소, 카테고리, 식당 이름 등으로 검색
+- 페이지네이션
 
 #### 맛집 리스트 페이지
 
