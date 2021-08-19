@@ -1,5 +1,8 @@
 # 탱고 플레이트 (망고플레이트 클론코딩)
 
+![Screen Shot 2021-08-19 at 5 19 22 PM](https://user-images.githubusercontent.com/8315252/130033730-65f628fc-9cfa-4167-a2a1-2de44e7be1d8.png)
+
+
 ## Tango Plate Project Family
 
 - F.E<br>
